@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS mydb;
-USE mydb;
+CREATE DATABASE IF NOT EXISTS hackathon_backend;
+USE hackathon_backend;
 
 CREATE TABLE States (
     id INT PRIMARY KEY AUTO_INCREMENT,

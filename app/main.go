@@ -14,7 +14,7 @@ const (
 	dbPort     = "3306"
 	dbUser     = "myuser"
 	dbPassword = "mypassword"
-	dbName     = "mydb"
+	dbName     = "hackathon_backend"
 )
 
 func main() {
