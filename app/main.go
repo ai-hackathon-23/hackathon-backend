@@ -76,6 +76,8 @@ func main() {
 		switch r.Method {
 		case "GET":
 			carePlanHandler.HandleGetCarePlan(w, r)
+		case "PATCH":
+			carePlanHandler.HandleUpdateCarePlan(w, r)
 		default:
 			fmt.Fprint(w, "Method not allowed.\n")
 		}
