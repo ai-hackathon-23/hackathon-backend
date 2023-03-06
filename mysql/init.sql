@@ -11,8 +11,8 @@ CREATE TABLE States (
 
 CREATE TABLE CarePlans (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    author VARCHAR(255) NOT NULL,
-    facility_name VARCHAR(255) NOT NULL,
+    author VARCHAR(255),
+    facility_name VARCHAR(255),
     result_analyze VARCHAR(255),
     care_committee_opinion VARCHAR(255),
     specified_service VARCHAR(255),
