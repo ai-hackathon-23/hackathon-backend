@@ -23,11 +23,20 @@ CREATE TABLE Clients (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     age INT NOT NULL,
-    disease VARCHAR(255) NOT NULL,
-    family_living_together JSON,
-    state_id INT,
-    care_plan_id INT,
-    FOREIGN KEY (state_id) REFERENCES States(id),
-    FOREIGN KEY (care_plan_id) REFERENCES CarePlans(id)
+    family_living_together JSON
+);
+
+CREATE TABLE StateRecords (
+state_id INT NOT NULL,
+client_id Int NOT NULL,
+FOREIGN KEY (state_id) REFERENCES States(id),
+FOREIGN KEY (client_id) REFERENCES Clients(id)
+);
+
+CREATE TABLE CarePlanRecords (
+care_plan_id INT,
+client_id Int,
+FOREIGN KEY (care_plan_id) REFERENCES CarePlans(id),
+FOREIGN KEY (client_id) REFERENCES Clients(id)
 );
 
