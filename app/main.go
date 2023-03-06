@@ -71,7 +71,7 @@ func PatienceHandler(w http.ResponseWriter, r *http.Request) {
 if err != nil {
 	log.Fatalf("failed to connect to database: %v", err)
 }
-    ins, err := db.Prepare("INSERT INTO Clients(name,age,living_info) VALUES(?,?,?,?)")
+    ins, err := db.Prepare("INSERT INTO Clients(name,age,family_living_togethers) VALUES(?,?,?,?)")
     if err != nil {
         log.Fatal(err)
     }

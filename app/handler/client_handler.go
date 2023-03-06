@@ -20,9 +20,9 @@ func NewClientHandler(repository *rp.ClientRepository) ClientHandler {
 func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter,r *http.Request) error {
     name := r.FormValue("name")
     age, _ := strconv.Atoi(r.FormValue("age"))
-    livingInfo := r.FormValue("living_info")
+    livingInfo := r.FormValue("family_living_togethers")
 	
-    client,err := hd.rp.CreateClient(rp.Client{Name: name, Age: age,LivingInfo: livingInfo})
+    client,err := hd.rp.CreateClient(rp.Client{Name: name, Age: age,FamilyLivingTogethers: livingInfo})
     if err != nil {
 		log.Print(err)
 	} else {
