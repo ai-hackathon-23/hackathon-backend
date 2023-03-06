@@ -31,3 +31,14 @@ func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter,r *http.Reques
 	}
 	return nil
 }
+
+func (hd *ClientHandler) IndexClients(w http.ResponseWriter,r *http.Request) error {
+    clients,err := hd.rp.IndexClients()
+    if err != nil {
+		log.Print(err)
+	} else {
+		jsonData, _ := json.Marshal(clients)
+		fmt.Fprintf(w, string(jsonData))
+	}
+	return nil
+}

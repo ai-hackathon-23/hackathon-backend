@@ -46,6 +46,15 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			clientHandler.IndexClients(w, r)
+		default:
+			fmt.Fprint(w, "Method not allowed.\n")
+		}
+	})
+
 	http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
