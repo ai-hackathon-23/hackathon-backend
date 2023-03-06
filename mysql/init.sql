@@ -23,7 +23,7 @@ CREATE TABLE Clients (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     age INT NOT NULL,
-    family_living_together JSON
+    living_info VARCHAR(255)
 );
 
 CREATE TABLE StateRecords (
