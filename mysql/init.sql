@@ -23,7 +23,7 @@ CREATE TABLE Clients (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     age INT NOT NULL,
-    living_info VARCHAR(255)
+    family_living_togethers VARCHAR(255)
 );
 
 CREATE TABLE StateRecords (
