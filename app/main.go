@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	hd "hackathon/handler"
+	repository "hackathon/repository"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -25,9 +27,44 @@ func main() {
 	}
 	defer db.Close()
 
+	repository := repository.NewClientRepository(db)
+
+	clientHandler := hd.NewClientHandler(repository)
+
+	http.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			fmt.Fprint(w, "GET hello!\n")
+		case "POST":
+			clientHandler.HandleCreateClient(w,r)
+		// ...省略
+		default:
+			fmt.Fprint(w, "Method not allowed.\n")
+		}
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, World!")
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func PatienceHandler(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+	dbUser, dbPassword, dbHost, dbPort, dbName))
+if err != nil {
+	log.Fatalf("failed to connect to database: %v", err)
+}
+    ins, err := db.Prepare("INSERT INTO Clients(name,age,living_info) VALUES(?,?,?,?)")
+    if err != nil {
+        log.Fatal(err)
+    }
+	jsonStr := `["apple", "orange", "banana"]`
+
+    result, err := ins.Exec("太郎",20,"headache",jsonStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Print(result)
 }
