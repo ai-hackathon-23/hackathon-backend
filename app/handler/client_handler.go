@@ -10,20 +10,20 @@ import (
 )
 
 type ClientHandler struct {
-    rp *rp.ClientRepository
+	rp *rp.ClientRepository
 }
 
 func NewClientHandler(repository *rp.ClientRepository) ClientHandler {
-    return ClientHandler{repository}
+	return ClientHandler{repository}
 }
 
-func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter,r *http.Request) error {
-    name := r.FormValue("name")
-    age, _ := strconv.Atoi(r.FormValue("age"))
-    livingInfo := r.FormValue("family_living_togethers")
-	
-    client,err := hd.rp.CreateClient(rp.Client{Name: name, Age: age,FamilyLivingTogethers: livingInfo})
-    if err != nil {
+func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter, r *http.Request) error {
+	name := r.FormValue("name")
+	age, _ := strconv.Atoi(r.FormValue("age"))
+	livingInfo := r.FormValue("family_living_togethers")
+
+	client, err := hd.rp.CreateClient(rp.Client{Name: name, Age: age, FamilyLivingTogethers: livingInfo})
+	if err != nil {
 		log.Print(err)
 	} else {
 		jsonData, _ := json.Marshal(client)
@@ -32,9 +32,9 @@ func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter,r *http.Reques
 	return nil
 }
 
-func (hd *ClientHandler) IndexClients(w http.ResponseWriter,r *http.Request) error {
-    clients,err := hd.rp.IndexClients()
-    if err != nil {
+func (hd *ClientHandler) IndexClients(w http.ResponseWriter, r *http.Request) error {
+	clients, err := hd.rp.IndexClients()
+	if err != nil {
 		log.Print(err)
 	} else {
 		jsonData, _ := json.Marshal(clients)
