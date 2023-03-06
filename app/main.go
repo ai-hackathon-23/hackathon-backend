@@ -27,16 +27,31 @@ func main() {
 	}
 	defer db.Close()
 
-	repository := repository.NewClientRepository(db)
+	clientRepository := repository.NewClientRepository(db)
 
-	clientHandler := hd.NewClientHandler(repository)
+	clientHandler := hd.NewClientHandler(clientRepository)
+	
+	stateRepository := repository.NewStateRepository(db)
 
-	http.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
+     stateHandler := hd.NewStateHandler(stateRepository)
+	http.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			fmt.Fprint(w, "GET hello!\n")
 		case "POST":
 			clientHandler.HandleCreateClient(w,r)
+		// ...省略
+		default:
+			fmt.Fprint(w, "Method not allowed.\n")
+		}
+	})
+
+	http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			fmt.Fprint(w, "GET hello!\n")
+		case "POST":
+			stateHandler.HandleCreateState(w,r)
 		// ...省略
 		default:
 			fmt.Fprint(w, "Method not allowed.\n")
