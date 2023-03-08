@@ -8,6 +8,7 @@ import (
 
 	hd "hackathon/handler"
 	repository "hackathon/repository"
+	usecase "hackathon/usecase"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -29,8 +30,8 @@ func main() {
 	defer db.Close()
 
 	clientRepository := repository.NewClientRepository(db)
-
-	clientHandler := hd.NewClientHandler(clientRepository)
+	clientUseCase := usecase.NewClientUseCase(clientRepository)
+	clientHandler := hd.NewClientHandler(clientUseCase)
 
 	stateRepository := repository.NewStateRepository(db)
 
