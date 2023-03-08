@@ -15,7 +15,7 @@ func NewCarePlanRepository(db *sql.DB) *CarePlanRepository {
 
 func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) {
 
-	stmt, err := r.db.Prepare("INSERT INTO CarePlans(specified_service,care_policy) VALUES(?,?)")
+	stmt, err := r.db.Prepare("INSERT INTO CarePlans(specified_service, care_policy, updated_at) VALUES(?,?,CURRENT_TIME)")
 	if err != nil {
 		return nil, err
 	}
