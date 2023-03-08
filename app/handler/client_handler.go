@@ -3,26 +3,25 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	rp "hackathon/repository"
+	usecase "hackathon/usecase"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 type ClientHandler struct {
-	rp *rp.ClientRepository
+	usecase usecase.ClientUseCase
 }
 
-func NewClientHandler(repository *rp.ClientRepository) ClientHandler {
-	return ClientHandler{repository}
+func NewClientHandler(usecase usecase.ClientUseCase) ClientHandler {
+	return ClientHandler{usecase}
 }
 
 func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter, r *http.Request) error {
 	name := r.FormValue("name")
-	age, _ := strconv.Atoi(r.FormValue("age"))
+	age := r.FormValue("age")
 	livingInfo := r.FormValue("family_living_togethers")
 
-	client, err := hd.rp.CreateClient(rp.Client{Name: name, Age: age, FamilyLivingTogethers: livingInfo})
+	client, err := hd.usecase.CreateClient(name, age, livingInfo)
 	if err != nil {
 		log.Print(err)
 	} else {
@@ -33,7 +32,7 @@ func (hd *ClientHandler) HandleCreateClient(w http.ResponseWriter, r *http.Reque
 }
 
 func (hd *ClientHandler) IndexClients(w http.ResponseWriter, r *http.Request) error {
-	clients, err := hd.rp.IndexClients()
+	clients, err := hd.usecase.IndexClients()
 	if err != nil {
 		log.Print(err)
 	} else {
