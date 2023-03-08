@@ -35,6 +35,7 @@ func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) 
 		Id:               lastId,
 		SpecifiedService: sql.NullString{String: "歩行訓練や自立飲食ができるようにしていきましょう", Valid: true},
 		CarePolicy:       sql.NullString{String: "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", Valid: true},
+		UpdatedAt:        "2023-03-09",
 	}, nil
 
 }
@@ -130,5 +131,5 @@ type CarePlan struct {
 	CareCommitteeOpinion sql.NullString
 	SpecifiedService     sql.NullString
 	CarePolicy           sql.NullString
-	UpdatedAt            sql.NullString
+	UpdatedAt            string
 }
