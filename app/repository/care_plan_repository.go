@@ -69,10 +69,7 @@ func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error
 		query += " care_policy = ?,"
 		params = append(params, carePlan.CarePolicy)
 	}
-	if carePlan.UpdatedAt.String != "" {
-		query += " updated_at = ?,"
-		params = append(params, carePlan.UpdatedAt)
-	}
+
 	// remove the trailing comma
 	query = query[:len(query)-1]
 	query += " WHERE id = ?"

@@ -48,7 +48,7 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 		CareCommitteeOpinion: sql.NullString{String: careComitteeOpinion, Valid: careComitteeOpinion != ""},
 		SpecifiedService:     sql.NullString{String: specifiedService, Valid: specifiedService != ""},
 		CarePolicy:           sql.NullString{String: carePolicy, Valid: carePolicy != ""},
-		UpdatedAt:            sql.NullString{String: updatedAt, Valid: updatedAt != ""},
+		UpdatedAt:            updatedAt,
 	}
 
 	updatedCarePlan, err := hd.rp.UpdateCarePlan(carePlan)
@@ -63,7 +63,7 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 			CareCommitteeOpinion: updatedCarePlan.CareCommitteeOpinion.String,
 			SpecifiedService:     updatedCarePlan.SpecifiedService.String,
 			CarePolicy:           updatedCarePlan.CarePolicy.String,
-			UpdatedAt:            updatedCarePlan.UpdatedAt.String,
+			UpdatedAt:            updatedCarePlan.UpdatedAt,
 		})
 		fmt.Fprintf(w, string(jsonData))
 	}
