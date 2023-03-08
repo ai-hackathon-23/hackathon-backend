@@ -39,6 +39,7 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 	careComitteeOpinion := r.FormValue("care_committee_opinion")
 	specifiedService := r.FormValue("specified_service")
 	carePolicy := r.FormValue("care_policy")
+	updatedAt := r.FormValue("updated_at")
 	carePlan := rp.CarePlan{
 		Id:                   id,
 		Author:               sql.NullString{String: author, Valid: author != ""},
@@ -47,13 +48,23 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 		CareCommitteeOpinion: sql.NullString{String: careComitteeOpinion, Valid: careComitteeOpinion != ""},
 		SpecifiedService:     sql.NullString{String: specifiedService, Valid: specifiedService != ""},
 		CarePolicy:           sql.NullString{String: carePolicy, Valid: carePolicy != ""},
+		UpdatedAt:            sql.NullString{String: updatedAt, Valid: updatedAt != ""},
 	}
 
 	updatedCarePlan, err := hd.rp.UpdateCarePlan(carePlan)
 	if err != nil {
 		log.Print(err)
 	} else {
-		jsonData, _ := json.Marshal(CarePlan{Id: updatedCarePlan.Id, Author: updatedCarePlan.Author.String, FacilityName: updatedCarePlan.FacilityName.String, ResultAnalyze: updatedCarePlan.ResultAnalyze.String, CareCommitteeOpinion: updatedCarePlan.CareCommitteeOpinion.String, SpecifiedService: updatedCarePlan.SpecifiedService.String, CarePolicy: updatedCarePlan.CarePolicy.String})
+		jsonData, _ := json.Marshal(CarePlan{
+			Id:                   updatedCarePlan.Id,
+			Author:               updatedCarePlan.Author.String,
+			FacilityName:         updatedCarePlan.FacilityName.String,
+			ResultAnalyze:        updatedCarePlan.ResultAnalyze.String,
+			CareCommitteeOpinion: updatedCarePlan.CareCommitteeOpinion.String,
+			SpecifiedService:     updatedCarePlan.SpecifiedService.String,
+			CarePolicy:           updatedCarePlan.CarePolicy.String,
+			UpdatedAt:            updatedCarePlan.UpdatedAt.String,
+		})
 		fmt.Fprintf(w, string(jsonData))
 	}
 	return nil
@@ -67,4 +78,5 @@ type CarePlan struct {
 	CareCommitteeOpinion string
 	SpecifiedService     string
 	CarePolicy           string
+	UpdatedAt            string
 }

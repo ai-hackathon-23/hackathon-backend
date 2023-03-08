@@ -68,6 +68,10 @@ func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error
 		query += " care_policy = ?,"
 		params = append(params, carePlan.CarePolicy)
 	}
+	if carePlan.UpdatedAt.String != "" {
+		query += " updated_at = ?,"
+		params = append(params, carePlan.UpdatedAt)
+	}
 	// remove the trailing comma
 	query = query[:len(query)-1]
 	query += " WHERE id = ?"
@@ -100,7 +104,16 @@ func (r *CarePlanRepository) GetCarePlanById(id int64) (*CarePlan, error) {
 
 	carePlan := CarePlan{}
 	log.Print(row)
-	err = row.Scan(&carePlan.Id, &carePlan.Author, &carePlan.FacilityName, &carePlan.ResultAnalyze, &carePlan.CareCommitteeOpinion, &carePlan.SpecifiedService, &carePlan.CarePolicy)
+	err = row.Scan(
+		&carePlan.Id,
+		&carePlan.Author,
+		&carePlan.FacilityName,
+		&carePlan.ResultAnalyze,
+		&carePlan.CareCommitteeOpinion,
+		&carePlan.SpecifiedService,
+		&carePlan.CarePolicy,
+		&carePlan.UpdatedAt,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -117,4 +130,5 @@ type CarePlan struct {
 	CareCommitteeOpinion sql.NullString
 	SpecifiedService     sql.NullString
 	CarePolicy           sql.NullString
+	UpdatedAt            sql.NullString
 }

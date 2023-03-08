@@ -16,7 +16,8 @@ CREATE TABLE CarePlans (
     result_analyze VARCHAR(255),
     care_committee_opinion VARCHAR(255),
     specified_service VARCHAR(255),
-    care_policy VARCHAR(255)
+    care_policy VARCHAR(255),
+    updated_at DATE
 );
 
 CREATE TABLE Clients (
@@ -27,16 +28,15 @@ CREATE TABLE Clients (
 );
 
 CREATE TABLE StateRecords (
-state_id INT NOT NULL,
-client_id Int NOT NULL,
-FOREIGN KEY (state_id) REFERENCES States(id),
-FOREIGN KEY (client_id) REFERENCES Clients(id)
+    state_id INT NOT NULL,
+    client_id Int NOT NULL,
+    FOREIGN KEY (state_id) REFERENCES States(id),
+    FOREIGN KEY (client_id) REFERENCES Clients(id)
 );
 
 CREATE TABLE CarePlanRecords (
-care_plan_id INT,
-client_id Int,
-FOREIGN KEY (care_plan_id) REFERENCES CarePlans(id),
-FOREIGN KEY (client_id) REFERENCES Clients(id)
+    care_plan_id INT,
+    client_id Int,
+    FOREIGN KEY (care_plan_id) REFERENCES CarePlans(id),
+    FOREIGN KEY (client_id) REFERENCES Clients(id)
 );
-
