@@ -37,38 +37,58 @@ func (r *ClientRepository) CreateClient(name string, age int, familyLivingTogeth
 	return &Client{Id: int(lastId), Name: name, Age: age, FamilyLivingTogethers: string(familyLivingTogethers)}, nil
 }
 
-func (r *ClientRepository) IndexClients() ([]Client, error) {
-	stmt, err := r.db.Prepare("Select * from Clients")
+func (r *ClientRepository) IndexClients() (*[]Client, error) {
+
+	stmt, err := r.db.Prepare("SELECT * FROM Clients")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	rows, err := stmt.Query()
 
+	rows, err := stmt.Query()
+	log.Print(rows)
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
-
 	clients := []Client{}
 	for rows.Next() {
-		var id int
-		var name string
-		var age int
-		var familyLivingTogethers string
-		if err := rows.Scan(&id, &name, &age, &familyLivingTogethers); err != nil {
+		carePlan := Client{}
+		err := rows.Scan(
+			&carePlan.Id,
+			&carePlan.Name,
+			&carePlan.Age,
+			&carePlan.FamilyLivingTogethers,
+		)
+		clients = append(clients, carePlan)
+		if err != nil {
 			return nil, err
 		}
-		clients = append(clients,
-			Client{Id: id, Name: name, Age: age, FamilyLivingTogethers: familyLivingTogethers})
 	}
-	return clients, nil
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return &clients, nil
+
 }
+
 
 type Client struct {
 	Id                    int    `json:"id"`
 	Name                  string `json:"name"`
 	Age                   int    `json:"age"`
 	FamilyLivingTogethers string `json:"family_living_togethers"`
+	CarePlans             []CarePlans `json:"care_plans"`
+}
+
+type CarePlans struct {
+	Id                   int64  `json:"id"`
+	Author               string `json:"author"`
+	FacilityName         string `json:"facility_name"`
+	ResultAnalyze        string `json:"result_analyze"`
+	CareCommitteeOpinion string `json:"care_committee_opinion"`
+	SpecifiedService     string `json:"specified_service"`
+	CarePolicy           string `json:"care_policy"`
+	UpdatedAt            string `json:"updated_at"`
+	ClientId         string `json:"client_id"`
 }

@@ -28,16 +28,16 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
-
+	carePlanRepository := repository.NewCarePlanRepository(db)
 	clientRepository := repository.NewClientRepository(db)
-	clientUseCase := usecase.NewClientUseCase(clientRepository)
+	clientUseCase := usecase.NewClientUseCase(clientRepository,carePlanRepository)
 	clientHandler := hd.NewClientHandler(clientUseCase)
 
 	stateRepository := repository.NewStateRepository(db)
 
 	stateHandler := hd.NewStateHandler(stateRepository)
 
-	carePlanRepository := repository.NewCarePlanRepository(db)
+
 
 	carePlanHandler := hd.NewCarePlanHandler(carePlanRepository,&clientRepository)
 	http.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +101,7 @@ func main() {
 }
 
 func PatienceHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		dbUser, dbPassword, dbHost, dbPort, dbName))
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
