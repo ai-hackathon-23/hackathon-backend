@@ -15,6 +15,7 @@ func NewStateRepository(db *sql.DB) *StateRepository {
 }
 
 func (r *StateRepository) CreateState(disease string, treatments []string, medicines []string, treatmentPolicy string, clientId string) (*State, error) {
+	log.Print(treatmentPolicy)
 	ins, err := r.db.Prepare("INSERT INTO States(disease,treatments,medicines,treatment_policy, client_id) VALUES(?,?,?,?,?)")
 	if err != nil {
 		return nil, err
@@ -28,7 +29,7 @@ func (r *StateRepository) CreateState(disease string, treatments []string, medic
 		return nil, err
 	}
 	lastId, _ := result.LastInsertId()
-	return &State{Id: int(lastId), Disease: disease, Treatments: treatments, Medicines: medicines, ClientId: clientId}, nil
+	return &State{Id: int(lastId), Disease: disease, Treatments: treatments, Medicines: medicines, ClientId: clientId, TreatmentPolicy: treatmentPolicy}, nil
 }
 
 type State struct {

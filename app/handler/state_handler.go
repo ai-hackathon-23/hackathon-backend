@@ -25,6 +25,7 @@ func (hd *StateHandler) HandleCreateState(w http.ResponseWriter, r *http.Request
 	clientId := r.FormValue("client_id")
 	treatmentsArray := strings.Split(treatments, ",")
 	medicinesArray := strings.Split(medicines, ",")
+	log.Print(treatmentPolicy)
 	state, err := hd.rp.CreateState(disease, treatmentsArray, medicinesArray, treatmentPolicy, clientId)
 	if err != nil {
 		log.Print(err)
