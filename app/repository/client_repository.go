@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"log"
 )
 
 type ClientRepository struct {
@@ -10,6 +11,16 @@ type ClientRepository struct {
 
 func NewClientRepository(db *sql.DB) ClientRepository {
 	return ClientRepository{db: db}
+}
+
+func (r *ClientRepository) FindByID(id string) (*Client, error) {
+	client := &Client{}
+	err := r.db.QueryRow("SELECT * FROM Clients WHERE id = ?", id).Scan(&client.Id, &client.Name, &client.Age, &client.FamilyLivingTogethers)
+	log.Print(id)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 func (r *ClientRepository) CreateClient(name string, age int, familyLivingTogethers []byte) (*Client, error) {

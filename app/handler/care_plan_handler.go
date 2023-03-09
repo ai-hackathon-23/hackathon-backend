@@ -13,10 +13,11 @@ import (
 
 type CarePlanHandler struct {
 	rp *rp.CarePlanRepository
+	cprp *rp.ClientRepository
 }
 
-func NewCarePlanHandler(repository *rp.CarePlanRepository) CarePlanHandler {
-	return CarePlanHandler{repository}
+func NewCarePlanHandler(repository *rp.CarePlanRepository,	cprp *rp.ClientRepository) CarePlanHandler {
+	return CarePlanHandler{repository,cprp}
 }
 
 func (hd *CarePlanHandler) HandleGetCarePlan(w http.ResponseWriter, r *http.Request) error {
@@ -49,6 +50,12 @@ func (hd *CarePlanHandler) HandleGetCarePlans(w http.ResponseWriter, r *http.Req
 
 	cpList := []CarePlan{}
 	for _, care_plan := range *care_plans {
+
+		client, err := hd.cprp.FindByID(care_plan.ClientId)
+		if err != nil {
+			return err
+		}
+
 		cp := CarePlan{
 			Id:                   care_plan.Id,
 			Author:               care_plan.Author.String,
@@ -57,6 +64,7 @@ func (hd *CarePlanHandler) HandleGetCarePlans(w http.ResponseWriter, r *http.Req
 			CareCommitteeOpinion: care_plan.CareCommitteeOpinion.String,
 			SpecifiedService:     care_plan.SpecifiedService.String,
 			CarePolicy:           care_plan.CarePolicy.String,
+			Client:               *client,
 			UpdatedAt:            care_plan.UpdatedAt,
 		}
 		cpList = append(cpList, cp)
@@ -120,6 +128,7 @@ type CarePlan struct {
 	SpecifiedService     string `json:"specified_service"`
 	CarePolicy           string `json:"care_policy"`
 	UpdatedAt            string `json:"updated_at"`
+	Client               rp.Client `json:"client"`
 }
 
 func ToSnakeCase(s string) string {

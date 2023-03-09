@@ -50,7 +50,7 @@ func (r *CarePlanRepository) IndexCarePlan() (*[]CarePlan, error) {
 		return nil, err
 	}
 	defer rows.Close()
-
+	log.Print(rows)
 	carePlans := []CarePlan{}
 	for rows.Next() {
 		carePlan := CarePlan{}
@@ -62,11 +62,13 @@ func (r *CarePlanRepository) IndexCarePlan() (*[]CarePlan, error) {
 			&carePlan.CareCommitteeOpinion,
 			&carePlan.SpecifiedService,
 			&carePlan.CarePolicy,
+			&carePlan.ClientId,
 			&carePlan.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
+		log.Print(carePlan)
 		carePlans = append(carePlans, carePlan)
 	}
 	if err := rows.Err(); err != nil {

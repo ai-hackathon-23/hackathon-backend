@@ -39,7 +39,7 @@ func main() {
 
 	carePlanRepository := repository.NewCarePlanRepository(db)
 
-	carePlanHandler := hd.NewCarePlanHandler(carePlanRepository)
+	carePlanHandler := hd.NewCarePlanHandler(carePlanRepository,&clientRepository)
 	http.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
