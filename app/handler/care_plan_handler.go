@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type CarePlanHandler struct {
@@ -25,7 +26,16 @@ func (hd *CarePlanHandler) HandleGetCarePlan(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		log.Print(err)
 	} else {
-		jsonData, _ := json.Marshal(care_plan)
+		jsonData, _ := json.Marshal(CarePlan{
+			Id:                   care_plan.Id,
+			Author:               care_plan.Author.String,
+			FacilityName:         care_plan.FacilityName.String,
+			ResultAnalyze:        care_plan.ResultAnalyze.String,
+			CareCommitteeOpinion: care_plan.CareCommitteeOpinion.String,
+			SpecifiedService:     care_plan.SpecifiedService.String,
+			CarePolicy:           care_plan.CarePolicy.String,
+			UpdatedAt:            care_plan.UpdatedAt,
+		})
 		fmt.Fprintf(w, string(jsonData))
 	}
 	return nil
@@ -71,12 +81,27 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 }
 
 type CarePlan struct {
-	Id                   int64
-	Author               string
-	FacilityName         string
-	ResultAnalyze        string
-	CareCommitteeOpinion string
-	SpecifiedService     string
-	CarePolicy           string
-	UpdatedAt            string
+	Id                   int64  `json:"id"`
+	Author               string `json:"author"`
+	FacilityName         string `json:"facility_name"`
+	ResultAnalyze        string `json:"result_analyze"`
+	CareCommitteeOpinion string `json:"care_committee_opinion"`
+	SpecifiedService     string `json:"specified_service"`
+	CarePolicy           string `json:"care_policy"`
+	UpdatedAt            string `json:"updated_at"`
+}
+
+func ToSnakeCase(s string) string {
+	var builder strings.Builder
+	for i, c := range s {
+		if c >= 'A' && c <= 'Z' {
+			if i > 0 {
+				builder.WriteByte('_')
+			}
+			builder.WriteByte(byte(c + 32))
+		} else {
+			builder.WriteRune(c)
+		}
+	}
+	return builder.String()
 }
