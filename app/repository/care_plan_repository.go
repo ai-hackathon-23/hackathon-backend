@@ -24,7 +24,7 @@ func (r *CarePlanRepository) GetCarePlansByClientId(clientId string) ([]CarePlan
 	defer db.Close()
 	log.Print(clientId)
 	// クエリを実行する
-	stmt, err := r.db.Prepare("SELECT * FROM CarePlans WHERE id = ?")
+	stmt, err := r.db.Prepare("SELECT * FROM CarePlans WHERE client_id = ?")
 	if err != nil {
 		// handle error
 	}
@@ -35,7 +35,8 @@ func (r *CarePlanRepository) GetCarePlansByClientId(clientId string) ([]CarePlan
 		return nil, err
 	}
 	defer rows.Close()
-	log.Print("carePlan")
+	log.Print(rows)
+	log.Print("hoeg")
 	// 結果を処理する
 	carePlans := []CarePlans{}
 	for rows.Next() {
@@ -64,12 +65,12 @@ func (r *CarePlanRepository) GetCarePlansByClientId(clientId string) ([]CarePlan
 
 func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) {
 
-	stmt, err := r.db.Prepare("INSERT INTO CarePlans(specified_service, care_policy, updated_at, client_id) VALUES(?,?,CURRENT_TIME, ?)")
+	stmt, err := r.db.Prepare("INSERT INTO CarePlans(author,facility_name,result_analyze,care_committee_opinion,specified_service, care_policy, updated_at, client_id) VALUES(?,?,?,?,?,?,CURRENT_TIME, ?)")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec("歩行訓練や自立飲食ができるようにしていきましょう", "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", clientId)
+	result, err := stmt.Exec("","","","","歩行訓練や自立飲食ができるようにしていきましょう", "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", clientId)
 	if err != nil {
 		return nil, err
 	}
