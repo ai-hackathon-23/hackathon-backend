@@ -89,6 +89,7 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 	specifiedService := r.FormValue("specified_service")
 	carePolicy := r.FormValue("care_policy")
 	updatedAt := r.FormValue("updated_at")
+	log.Print(resultAnalyze)
 	carePlan := rp.CarePlan{
 		Id:                   id,
 		Author:               sql.NullString{String: author, Valid: author != ""},
@@ -99,6 +100,7 @@ func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.R
 		CarePolicy:           sql.NullString{String: carePolicy, Valid: carePolicy != ""},
 		UpdatedAt:            updatedAt,
 	}
+	log.Print(carePlan)
 
 	updatedCarePlan, err := hd.rp.UpdateCarePlan(carePlan)
 	if err != nil {

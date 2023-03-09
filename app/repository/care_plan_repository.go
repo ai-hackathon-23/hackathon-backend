@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -60,7 +61,6 @@ func (r *CarePlanRepository) GetCarePlansByClientId(clientId string) ([]CarePlan
 	}
 	return carePlans, nil
 }
-
 
 func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) {
 
@@ -127,13 +127,13 @@ func (r *CarePlanRepository) IndexCarePlan() (*[]CarePlan, error) {
 }
 
 func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error) {
-
+	log.Print(carePlan.FacilityName.String)
 	// build the query string and the parameter list
 	query := "UPDATE CarePlans SET"
 	params := []interface{}{}
 	if carePlan.Author.String != "" {
 		query += " author = ?,"
-		params = append(params, carePlan.Author)
+		params = append(params, carePlan.Author.String)
 	}
 	if carePlan.FacilityName.String != "" {
 		query += " facility_name = ?,"
@@ -158,8 +158,9 @@ func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error
 	// remove the trailing comma
 	query = query[:len(query)-1]
 	query += " WHERE id = ?"
-	params = append(params, carePlan.Id)
+	params = append(params, strconv.FormatInt( carePlan.Id,10))
 	log.Print(query)
+	log.Print(params)
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return nil, err
@@ -167,16 +168,18 @@ func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error
 	defer stmt.Close()
 	_, err = stmt.Exec(params...)
 	if err != nil {
+		log.Print(err)
 		return nil, err
 	}
 
 	// 更新後のレコードを取得する
-	updatedCarePlan, _ := r.GetCarePlanById(carePlan.Id)
-
+	updatedCarePlan, err := r.GetCarePlanById(carePlan.Id)
+	log.Print(err)
 	return updatedCarePlan, nil
 }
 
 func (r CarePlanRepository) GetCarePlanById(id int64) (*CarePlan, error) {
+	log.Print("output")
 	stmt, err := r.db.Prepare("SELECT * FROM CarePlans Where id = ?")
 	if err != nil {
 		return nil, err
@@ -195,9 +198,11 @@ func (r CarePlanRepository) GetCarePlanById(id int64) (*CarePlan, error) {
 		&carePlan.CareCommitteeOpinion,
 		&carePlan.SpecifiedService,
 		&carePlan.CarePolicy,
+		&carePlan.ClientId,
 		&carePlan.UpdatedAt,
 	)
 	if err != nil {
+		log.Print(err)
 		return nil, err
 	}
 	log.Print(carePlan)
