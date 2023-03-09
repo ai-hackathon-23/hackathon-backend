@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rs/cors"
+
 	hd "hackathon/handler"
 	repository "hackathon/repository"
 	usecase "hackathon/usecase"
@@ -40,7 +42,10 @@ func main() {
 	carePlanRepository := repository.NewCarePlanRepository(db)
 
 	carePlanHandler := hd.NewCarePlanHandler(carePlanRepository,&clientRepository)
-	http.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			fmt.Fprint(w, "GET hello!\n")
@@ -52,7 +57,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			clientHandler.IndexClients(w, r)
@@ -97,7 +102,10 @@ func main() {
 		fmt.Fprintf(w, "Hello, World!")
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	c := cors.AllowAll()
+	handler := c.Handler(mux)
+
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func PatienceHandler(w http.ResponseWriter, r *http.Request) {
