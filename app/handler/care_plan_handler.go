@@ -41,6 +41,39 @@ func (hd *CarePlanHandler) HandleGetCarePlan(w http.ResponseWriter, r *http.Requ
 	return nil
 }
 
+func (hd *CarePlanHandler) HandleGetCarePlans(w http.ResponseWriter, r *http.Request) error {
+
+	care_plans, err := hd.rp.IndexCarePlan()
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	cpList := []CarePlan{}
+	for _, care_plan := range *care_plans {
+		cp := CarePlan{
+			Id:                   care_plan.Id,
+			Author:               care_plan.Author.String,
+			FacilityName:         care_plan.FacilityName.String,
+			ResultAnalyze:        care_plan.ResultAnalyze.String,
+			CareCommitteeOpinion: care_plan.CareCommitteeOpinion.String,
+			SpecifiedService:     care_plan.SpecifiedService.String,
+			CarePolicy:           care_plan.CarePolicy.String,
+			UpdatedAt:            care_plan.UpdatedAt,
+		}
+		cpList = append(cpList, cp)
+	}
+
+	jsonData, err := json.Marshal(cpList)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	fmt.Fprintf(w, string(jsonData))
+	return nil
+}
+
 func (hd *CarePlanHandler) HandleUpdateCarePlan(w http.ResponseWriter, r *http.Request) error {
 	id, _ := strconv.ParseInt(r.FormValue("id"), 10, 64)
 	author := r.FormValue("author")

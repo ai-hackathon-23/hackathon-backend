@@ -76,6 +76,15 @@ func main() {
 	http.HandleFunc("/care_plans", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
+			carePlanHandler.HandleGetCarePlans(w, r)
+		default:
+			fmt.Fprint(w, "Method not allowed.\n")
+		}
+	})
+
+	http.HandleFunc("/care_plan", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
 			carePlanHandler.HandleGetCarePlan(w, r)
 		case "PATCH":
 			carePlanHandler.HandleUpdateCarePlan(w, r)

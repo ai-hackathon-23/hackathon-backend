@@ -42,6 +42,45 @@ func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) 
 
 }
 
+func (r *CarePlanRepository) IndexCarePlan() (*[]CarePlan, error) {
+
+	stmt, err := r.db.Prepare("SELECT * FROM CarePlans")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	carePlans := []CarePlan{}
+	for rows.Next() {
+		carePlan := CarePlan{}
+		err := rows.Scan(
+			&carePlan.Id,
+			&carePlan.Author,
+			&carePlan.FacilityName,
+			&carePlan.ResultAnalyze,
+			&carePlan.CareCommitteeOpinion,
+			&carePlan.SpecifiedService,
+			&carePlan.CarePolicy,
+			&carePlan.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		carePlans = append(carePlans, carePlan)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return &carePlans, nil
+
+}
+
 func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error) {
 
 	// build the query string and the parameter list
