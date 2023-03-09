@@ -38,37 +38,68 @@ func (r *ClientRepository) CreateClient(name string, age int, familyLivingTogeth
 }
 
 func (r *ClientRepository) IndexClients() ([]Client, error) {
-	stmt, err := r.db.Prepare("Select * from Clients")
+	stmt, err := r.db.Prepare(`
+        SELECT c.id, c.name, c.age, c.family_living_togethers, cp.author, cp.facility_name, cp.result_analyze, cp.care_committee_opinion, cp.specified_service, cp.care_policy, cp.updated_at 
+        FROM Clients c 
+        LEFT JOIN CarePlans cp ON c.id = cp.client_id
+    `)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	rows, err := stmt.Query()
 
+	rows, err := stmt.Query()
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
 
-	clients := []Client{}
+	clients := map[int]Client{}
 	for rows.Next() {
 		var id int
-		var name string
+		var name *string
 		var age int
 		var familyLivingTogethers string
-		if err := rows.Scan(&id, &name, &age, &familyLivingTogethers); err != nil {
+		var author, facilityName, resultAnalyze, careCommitteeOpinion, specifiedService, carePolicy *string
+		var updatedAt *string
+		if err := rows.Scan(&id, &name, &age, &familyLivingTogethers, &author, &facilityName, &resultAnalyze, &careCommitteeOpinion, &specifiedService, &carePolicy, &updatedAt); err != nil {
 			return nil, err
 		}
-		clients = append(clients,
-			Client{Id: id, Name: name, Age: age, FamilyLivingTogethers: familyLivingTogethers})
+		client, ok := clients[id]
+		if !ok {
+			client = Client{Id: id, Name: *name, Age: age, FamilyLivingTogethers: familyLivingTogethers, CarePlans: []CarePlans{}}
+		}
+		carePlan := CarePlans{Author: *author, FacilityName: *facilityName, ResultAnalyze: *resultAnalyze, CareCommitteeOpinion: *careCommitteeOpinion, SpecifiedService: *specifiedService, CarePolicy: *carePolicy, UpdatedAt: *updatedAt}
+		client.CarePlans = append(client.CarePlans, carePlan)
+		clients[id] = client
 	}
-	return clients, nil
+
+	result := make([]Client, 0)
+	for _, client := range clients {
+		result = append(result, client)
+	}
+
+
+	return result, nil
 }
+
 
 type Client struct {
 	Id                    int    `json:"id"`
 	Name                  string `json:"name"`
 	Age                   int    `json:"age"`
 	FamilyLivingTogethers string `json:"family_living_togethers"`
+	CarePlans             []CarePlans `json:"care_plans"`
+}
+
+type CarePlans struct {
+	Id                   int64  `json:"id"`
+	Author               string `json:"author"`
+	FacilityName         string `json:"facility_name"`
+	ResultAnalyze        string `json:"result_analyze"`
+	CareCommitteeOpinion string `json:"care_committee_opinion"`
+	SpecifiedService     string `json:"specified_service"`
+	CarePolicy           string `json:"care_policy"`
+	UpdatedAt            string `json:"updated_at"`
+	Client               Client `json:"client"`
 }

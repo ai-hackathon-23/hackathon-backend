@@ -101,7 +101,7 @@ func main() {
 }
 
 func PatienceHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		dbUser, dbPassword, dbHost, dbPort, dbName))
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
