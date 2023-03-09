@@ -21,7 +21,6 @@ func NewCarePlanHandler(repository *rp.CarePlanRepository) CarePlanHandler {
 
 func (hd *CarePlanHandler) HandleGetCarePlan(w http.ResponseWriter, r *http.Request) error {
 	clientId := r.FormValue("client_id")
-
 	care_plan, err := hd.rp.CreateCarePlan(clientId)
 	if err != nil {
 		log.Print(err)
@@ -42,7 +41,6 @@ func (hd *CarePlanHandler) HandleGetCarePlan(w http.ResponseWriter, r *http.Requ
 }
 
 func (hd *CarePlanHandler) HandleGetCarePlans(w http.ResponseWriter, r *http.Request) error {
-
 	care_plans, err := hd.rp.IndexCarePlan()
 	if err != nil {
 		log.Print(err)

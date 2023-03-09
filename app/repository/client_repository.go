@@ -38,7 +38,7 @@ func (r *ClientRepository) IndexClients() ([]Client, error) {
 		return nil, err
 	}
 
-	defer stmt.Close()
+	defer rows.Close()
 
 	clients := []Client{}
 	for rows.Next() {
@@ -46,6 +46,9 @@ func (r *ClientRepository) IndexClients() ([]Client, error) {
 		var name string
 		var age int
 		var familyLivingTogethers string
+		if err := rows.Scan(&id, &name, &age, &familyLivingTogethers); err != nil {
+			return nil, err
+		}
 		clients = append(clients,
 			Client{Id: id, Name: name, Age: age, FamilyLivingTogethers: familyLivingTogethers})
 	}
@@ -53,8 +56,8 @@ func (r *ClientRepository) IndexClients() ([]Client, error) {
 }
 
 type Client struct {
-	Id                    int
-	Name                  string
-	Age                   int
-	FamilyLivingTogethers string
+	Id                    int    `json:"id"`
+	Name                  string `json:"name"`
+	Age                   int    `json:"age"`
+	FamilyLivingTogethers string `json:"family_living_togethers"`
 }
