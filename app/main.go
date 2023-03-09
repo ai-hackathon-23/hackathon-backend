@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rs/cors"
+
 	hd "hackathon/handler"
 	repository "hackathon/repository"
 	usecase "hackathon/usecase"
@@ -40,7 +42,10 @@ func main() {
 
 
 	carePlanHandler := hd.NewCarePlanHandler(carePlanRepository,&clientRepository)
-	http.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			fmt.Fprint(w, "GET hello!\n")
@@ -52,7 +57,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/clients", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			clientHandler.IndexClients(w, r)
@@ -61,7 +66,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			fmt.Fprint(w, "GET hello!\n")
@@ -73,7 +78,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/care_plans", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/care_plans", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			carePlanHandler.HandleGetCarePlans(w, r)
@@ -82,7 +87,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/care_plan", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/care_plan", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			carePlanHandler.HandleGetCarePlan(w, r)
@@ -93,11 +98,14 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, World!")
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	c := cors.AllowAll()
+	handler := c.Handler(mux)
+
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func PatienceHandler(w http.ResponseWriter, r *http.Request) {
