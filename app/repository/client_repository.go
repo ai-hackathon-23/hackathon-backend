@@ -37,50 +37,39 @@ func (r *ClientRepository) CreateClient(name string, age int, familyLivingTogeth
 	return &Client{Id: int(lastId), Name: name, Age: age, FamilyLivingTogethers: string(familyLivingTogethers)}, nil
 }
 
-func (r *ClientRepository) IndexClients() ([]Client, error) {
-	stmt, err := r.db.Prepare(`
-        SELECT c.id, c.name, c.age, c.family_living_togethers, cp.author, cp.facility_name, cp.result_analyze, cp.care_committee_opinion, cp.specified_service, cp.care_policy, cp.updated_at 
-        FROM Clients c 
-        LEFT JOIN CarePlans cp ON c.id = cp.client_id
-    `)
+func (r *ClientRepository) IndexClients() (*[]Client, error) {
+
+	stmt, err := r.db.Prepare("SELECT * FROM Clients")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query()
+	log.Print(rows)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
-	clients := map[int]Client{}
+	clients := []Client{}
 	for rows.Next() {
-		var id int
-		var name *string
-		var age int
-		var familyLivingTogethers string
-		var author, facilityName, resultAnalyze, careCommitteeOpinion, specifiedService, carePolicy *string
-		var updatedAt *string
-		if err := rows.Scan(&id, &name, &age, &familyLivingTogethers, &author, &facilityName, &resultAnalyze, &careCommitteeOpinion, &specifiedService, &carePolicy, &updatedAt); err != nil {
+		carePlan := Client{}
+		err := rows.Scan(
+			&carePlan.Id,
+			&carePlan.Name,
+			&carePlan.Age,
+			&carePlan.FamilyLivingTogethers,
+		)
+		clients = append(clients, carePlan)
+		if err != nil {
 			return nil, err
 		}
-		client, ok := clients[id]
-		if !ok {
-			client = Client{Id: id, Name: *name, Age: age, FamilyLivingTogethers: familyLivingTogethers, CarePlans: []CarePlans{}}
-		}
-		carePlan := CarePlans{Author: *author, FacilityName: *facilityName, ResultAnalyze: *resultAnalyze, CareCommitteeOpinion: *careCommitteeOpinion, SpecifiedService: *specifiedService, CarePolicy: *carePolicy, UpdatedAt: *updatedAt}
-		client.CarePlans = append(client.CarePlans, carePlan)
-		clients[id] = client
 	}
-
-	result := make([]Client, 0)
-	for _, client := range clients {
-		result = append(result, client)
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
+	return &clients, nil
 
-
-	return result, nil
 }
 
 
@@ -101,5 +90,5 @@ type CarePlans struct {
 	SpecifiedService     string `json:"specified_service"`
 	CarePolicy           string `json:"care_policy"`
 	UpdatedAt            string `json:"updated_at"`
-	Client               Client `json:"client"`
+	ClientId         string `json:"client_id"`
 }

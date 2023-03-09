@@ -14,6 +14,54 @@ func NewCarePlanRepository(db *sql.DB) *CarePlanRepository {
 	return &CarePlanRepository{db: db}
 }
 
+func (r *CarePlanRepository) GetCarePlansByClientId(clientId string) ([]CarePlans, error) {
+	// データベースに接続する
+	db, err := sql.Open("mysql", "user:password@/dbname")
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	log.Print(clientId)
+	// クエリを実行する
+	stmt, err := r.db.Prepare("SELECT * FROM CarePlans WHERE id = ?")
+	if err != nil {
+		// handle error
+	}
+
+	rows, err := stmt.Query(clientId)
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+	defer rows.Close()
+	log.Print("carePlan")
+	// 結果を処理する
+	carePlans := []CarePlans{}
+	for rows.Next() {
+		var carePlan CarePlans
+		err := rows.Scan(
+			&carePlan.Id,
+			&carePlan.Author,
+			&carePlan.FacilityName,
+			&carePlan.ResultAnalyze,
+			&carePlan.CareCommitteeOpinion,
+			&carePlan.SpecifiedService,
+			&carePlan.CarePolicy,
+			&carePlan.UpdatedAt,
+			&carePlan.ClientId,
+		)
+		if err != nil {
+			log.Print(err)
+			return nil, err
+		}
+		log.Print("carePlan")
+		log.Print(carePlan)
+		carePlans = append(carePlans, carePlan)
+	}
+	return carePlans, nil
+}
+
+
 func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) {
 
 	stmt, err := r.db.Prepare("INSERT INTO CarePlans(specified_service, care_policy, updated_at, client_id) VALUES(?,?,CURRENT_TIME, ?)")
@@ -128,7 +176,7 @@ func (r *CarePlanRepository) UpdateCarePlan(carePlan CarePlan) (*CarePlan, error
 	return updatedCarePlan, nil
 }
 
-func (r *CarePlanRepository) GetCarePlanById(id int64) (*CarePlan, error) {
+func (r CarePlanRepository) GetCarePlanById(id int64) (*CarePlan, error) {
 	stmt, err := r.db.Prepare("SELECT * FROM CarePlans Where id = ?")
 	if err != nil {
 		return nil, err

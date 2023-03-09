@@ -28,16 +28,16 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
-
+	carePlanRepository := repository.NewCarePlanRepository(db)
 	clientRepository := repository.NewClientRepository(db)
-	clientUseCase := usecase.NewClientUseCase(clientRepository)
+	clientUseCase := usecase.NewClientUseCase(clientRepository,carePlanRepository)
 	clientHandler := hd.NewClientHandler(clientUseCase)
 
 	stateRepository := repository.NewStateRepository(db)
 
 	stateHandler := hd.NewStateHandler(stateRepository)
 
-	carePlanRepository := repository.NewCarePlanRepository(db)
+
 
 	carePlanHandler := hd.NewCarePlanHandler(carePlanRepository,&clientRepository)
 	http.HandleFunc("/client", func(w http.ResponseWriter, r *http.Request) {
