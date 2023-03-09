@@ -16,28 +16,23 @@ func NewCarePlanRepository(db *sql.DB) *CarePlanRepository {
 
 func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) {
 
-	stmt, err := r.db.Prepare("INSERT INTO CarePlans(specified_service, care_policy, updated_at) VALUES(?,?,CURRENT_TIME)")
+	stmt, err := r.db.Prepare("INSERT INTO CarePlans(specified_service, care_policy, updated_at, client_id) VALUES(?,?,CURRENT_TIME, ?)")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec("歩行訓練や自立飲食ができるようにしていきましょう", "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします")
+	result, err := stmt.Exec("歩行訓練や自立飲食ができるようにしていきましょう", "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", clientId)
 	if err != nil {
 		return nil, err
 	}
 	lastId, _ := result.LastInsertId()
-
-	stmt, err = r.db.Prepare("INSERT INTO CarePlanRecords(client_id,care_plan_id) VALUES(?,?)")
-	if err != nil {
-		return nil, err
-	}
-	result, err = stmt.Exec(clientId, lastId)
 	t := time.Now().String()
 	return &CarePlan{
 		Id:               lastId,
 		SpecifiedService: sql.NullString{String: "歩行訓練や自立飲食ができるようにしていきましょう", Valid: true},
 		CarePolicy:       sql.NullString{String: "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", Valid: true},
 		UpdatedAt:        t,
+		ClientId:         clientId,
 	}, nil
 
 }
@@ -169,4 +164,5 @@ type CarePlan struct {
 	SpecifiedService     sql.NullString
 	CarePolicy           sql.NullString
 	UpdatedAt            string
+	ClientId             string
 }
