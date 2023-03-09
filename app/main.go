@@ -66,7 +66,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			fmt.Fprint(w, "GET hello!\n")
@@ -78,7 +78,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/care_plans", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/care_plans", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			carePlanHandler.HandleGetCarePlans(w, r)
@@ -87,7 +87,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/care_plan", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/care_plan", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			carePlanHandler.HandleGetCarePlan(w, r)
@@ -98,7 +98,7 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, World!")
 	})
 
