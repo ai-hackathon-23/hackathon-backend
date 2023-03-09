@@ -49,8 +49,8 @@ func (r *CarePlanRepository) GetCarePlansByClientId(clientId string) ([]CarePlan
 			&carePlan.CareCommitteeOpinion,
 			&carePlan.SpecifiedService,
 			&carePlan.CarePolicy,
-			&carePlan.UpdatedAt,
 			&carePlan.ClientId,
+			&carePlan.UpdatedAt,
 		)
 		if err != nil {
 			log.Print(err)
@@ -70,7 +70,7 @@ func (r *CarePlanRepository) CreateCarePlan(clientId string) (*CarePlan, error) 
 		return nil, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec("","","","","歩行訓練や自立飲食ができるようにしていきましょう", "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", clientId)
+	result, err := stmt.Exec("ケアマネ太朗","","","","歩行訓練や自立飲食ができるようにしていきましょう", "歌を口ずさむことに非常に生きがいを感じておられるので、喉元の治療はあまりしたくないそうです。そのため、喉を傷つけないよう、飲食介護の時には必ず職員が介助するようにします", clientId)
 	if err != nil {
 		return nil, err
 	}
